@@ -1,10 +1,12 @@
-STOCKHOLM TRIP V15.2 — TEST DESBLOQUEADO
+STOCKHOLM TRIP V15.3 — TEST DESBLOQUEADO
 
-CORRECCIÓN CRÍTICA:
-- Reparado error de sintaxis en money() que dejaba la página totalmente en blanco.
-- El arranque con localStorage ahora se ejecuta al final del script, después de inicializar
-  todos los días y estados del viaje.
-- Corregida la reanudación del Día 1 para usar render().
-- Cache bust actualizado a ?v=15.2.
-
-- Operación Estocolmo está desbloqueada artificialmente para probarla ahora.
+CORRECCIÓN:
+- Encontrado el motivo exacto por el que “DECIDIR LOS PASES” no avanzaba.
+- Faltaba declarar el estado `passes`.
+- `passesIntro()` podía mostrarse, pero `goCityDecision()` se detenía al leer `passes.goCity`.
+- Añadido:
+  let passes={transport:null,goCity:null};
+- Eliminado un fallback antiguo que llamaba a `renderPassDecision()`, función que no existe.
+- Corregido el total visible de atracciones para usar `individualRelevant`.
+- JavaScript validado con `node --check`.
+- Cache bust actualizado a ?v=15.3.

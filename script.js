@@ -939,6 +939,7 @@ function renderFullTrip(){
 
 
 /* ===== V12 · PASES + PRESUPUESTO INTELIGENTE ===== */
+let passes={transport:null,goCity:null};
 const passPrices={
  transport:{sevenDay:470,single:43,arlandaSupplement:157,arlandaCombined:200,estimatedCityRides:10},
  goCity:{essentials:649}
@@ -1000,11 +1001,14 @@ function transportMath(){
  };
 }
 function passesIntro(){
+ if(!passes || typeof passes!=="object") passes={transport:null,goCity:null};
+ if(!("transport" in passes)) passes.transport=null;
+ if(!("goCity" in passes)) passes.goCity=null;
  const g=goCityMath(),t=transportMath();
  app.innerHTML=`<section class="screen passes-scene"><section class="card passes-card">
  <span class="sticker">ÚLTIMA DECISIÓN PRÁCTICA</span><h2>Vale. Ahora toca hacer cuentas.</h2>
  <p>Ya sabemos qué queréis hacer. Los pases se deciden con el itinerario delante, no a ciegas.</p>
- <div class="math-preview"><div><small>🎟️ ATRACCIONES COMPATIBLES</small><strong>${money(g.individual)}</strong><span>${g.selectedRelevant.map(x=>x.name).join(" · ")}<br><b>Essentials solo puede cubrir 1 entre Vasa / Palacio / Skansen.</b></span></div><div><small>🚇 TRANSPORTE ESTIMADO</small><strong>${money(t.loose)}</strong><span>${t.cityRides} trayectos urbanos estimados + Arlanda ida/vuelta por SL.</span></div></div>
+ <div class="math-preview"><div><small>🎟️ ATRACCIONES COMPATIBLES</small><strong>${money(g.individualRelevant)}</strong><span>${g.selectedRelevant.map(x=>x.name).join(" · ")}<br><b>Essentials solo puede cubrir 1 entre Vasa / Palacio / Skansen.</b></span></div><div><small>🚇 TRANSPORTE ESTIMADO</small><strong>${money(t.loose)}</strong><span>${t.cityRides} trayectos urbanos estimados + Arlanda ida/vuelta por SL.</span></div></div>
  <button class="btn primary" id="startPasses">DECIDIR LOS PASES →</button></section></section>`;
  document.getElementById("startPasses").onclick=goCityDecision;
 }
@@ -1092,22 +1096,6 @@ document.addEventListener("click",e=>{
 
 
 
-/* ===== V14.3 · PASS SCREEN SAFETY ===== */
-document.addEventListener("click",function(e){
-  const b=e.target.closest("button");
-  if(!b)return;
-  const label=(b.textContent||"").replace(/\s+/g," ").trim().toUpperCase();
-  if(label.includes("DECIDIR LOS PASES")){
-    // If the original handler exists it runs too; this fallback only advances when
-    // the UI has remained on the practical-decision screen.
-    setTimeout(()=>{
-      const txt=(document.body.innerText||"").toUpperCase();
-      if(txt.includes("AHORA TOCA HACER CUENTAS") && typeof renderPassDecision==="function"){
-        renderPassDecision();
-      }
-    },30);
-  }
-});
 
 /* ===== V15 · AUTOGUARDADO ===== */
 document.addEventListener("click",()=>setTimeout(()=>saveGame(),50),true);
