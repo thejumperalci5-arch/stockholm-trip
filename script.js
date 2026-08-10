@@ -1,7 +1,7 @@
 const app=document.getElementById("app"),fx=document.getElementById("fx"),rate=.0917;
 
 const SAVE_KEY="stockholmTripV15";
-const TODAY_OVERRIDE=null; // set "2026-09-21" only for manual testing if needed
+const TODAY_OVERRIDE="2026-09-21"; // set "2026-09-21" only for manual testing if needed
 let operationState={phase:0,missionStartedAt:null,giftsReady:false,spaRevealed:false,inside:false,giftsDone:false,photoDone:false,completed:false};
 
 function saveGame(extra={}){
@@ -44,6 +44,27 @@ function dateKey(){
   const d=new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 }
+
+function operationCountdown(){
+  const target=new Date("2026-09-21T00:00:00");
+  const now=TODAY_OVERRIDE ? new Date(TODAY_OVERRIDE+"T00:00:00") : new Date();
+  let ms=Math.max(0,target-now);
+  const days=Math.floor(ms/86400000); ms%=86400000;
+  const hours=Math.floor(ms/3600000); ms%=3600000;
+  const mins=Math.floor(ms/60000); ms%=60000;
+  const secs=Math.floor(ms/1000);
+  return {days,hours,mins,secs};
+}
+function countdownHTML(){
+  const c=operationCountdown();
+  return `<div class="op-countdown">
+    <div><strong>${String(c.days).padStart(2,"0")}</strong><small>DÍAS</small></div>
+    <div><strong>${String(c.hours).padStart(2,"0")}</strong><small>HORAS</small></div>
+    <div><strong>${String(c.mins).padStart(2,"0")}</strong><small>MIN</small></div>
+    <div><strong>${String(c.secs).padStart(2,"0")}</strong><small>SEG</small></div>
+  </div>`;
+}
+
 function operationUnlockedByDate(){
   return dateKey()>="2026-09-21";
 }
@@ -1128,7 +1149,7 @@ function renderReturnHub(){
     <div class="operation-lock ${unlocked?"open":""}">
       <small>21 · 09 · 2026</small>
       <strong>${unlocked?"🔓 OPERACIÓN ESTOCOLMO":"🔒 OPERACIÓN ESTOCOLMO"}</strong>
-      <span>${unlocked?"Acceso autorizado.":"Bloqueado hasta el 21 de septiembre."}</span>
+      <span>${unlocked?"Acceso autorizado.":"Bloqueado hasta el 21 de septiembre."}</span>${countdownHTML()}
       ${unlocked?`<button class="btn primary" id="openOperation">ABRIR OPERACIÓN →</button>`:""}
     </div>
 

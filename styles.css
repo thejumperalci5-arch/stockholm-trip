@@ -712,3 +712,26 @@ button:active,.btn:active{transform:scale(.975)}
  .mission-rules{grid-template-columns:1fr}
  .spa-details{grid-template-columns:1fr}
 }
+
+/* V15.1 · contador Operación Estocolmo */
+.op-countdown{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin:16px auto 4px;
+  max-width:420px;
+}
+.op-countdown>div{
+  background:#fff;
+  border:1px solid rgba(16,47,67,.1);
+  border-radius:14px;
+  padding:10px 6px;
+}
+.op-countdown strong,.op-countdown small{display:block}
+.op-countdown strong{font:700 1.35rem Georgia,serif}
+.op-countdown small{font-size:.52rem;font-weight:1000;letter-spacing:.1em;color:var(--muted);margin-top:3px}
+@media(max-width:390px){
+ .op-countdown{gap:5px}
+ .op-countdown>div{padding:8px 4px}
+ .op-countdown strong{font-size:1.15rem}
+}
