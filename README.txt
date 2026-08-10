@@ -6,4 +6,4 @@ STOCKHOLM TRIP V16.6 — REVIEW / EDIT
 - Al cambiar, se guarda automáticamente y se actualizan itinerario/presupuesto.
 - No obliga a repetir MATCH/NO MATCH ni cartas para una corrección posterior.
 - Mantiene sonidos V16.5 y todo el guardado automático.
-TEST: Operación Estocolmo desbloqueada.
+FINAL: Operación Estocolmo bloqueada hasta el 21/09/2026.

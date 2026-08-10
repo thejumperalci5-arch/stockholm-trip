@@ -1,7 +1,7 @@
 const app=document.getElementById("app"),fx=document.getElementById("fx"),rate=.0917;
 
 const SAVE_KEY="stockholmTripV15";
-const TODAY_OVERRIDE="2026-09-21"; // set "2026-09-21" only for manual testing if needed
+const TODAY_OVERRIDE=null; // set "2026-09-21" only for manual testing if needed
 let operationState={phase:0,missionStartedAt:null,giftsReady:false,spaRevealed:false,inside:false,giftsDone:false,photoDone:false,completed:false};
 
 function saveGame(extra={}){
