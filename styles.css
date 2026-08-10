@@ -784,3 +784,288 @@ button:active,.btn:active{transform:scale(.975)}
     font-size:1.3rem;
   }
 }
+
+/* ==========================================================
+   V16 · FINAL POLISH
+   Solo estética / motion / legibilidad / iPhone.
+   ========================================================== */
+
+:root{
+  --paper:#fffaf0;
+  --paper-2:#fffdf7;
+  --ink:#173d56;
+  --muted:#6f7f85;
+  --gold:#d7b253;
+  --blue-soft:#d9ebf0;
+  --lilac:#e8dcf2;
+  --rose:#f2dfe6;
+  --green:#dfeee2;
+}
+
+/* Base visual */
+body{
+  background:#dfecee;
+  letter-spacing:.002em;
+}
+.card{
+  border:1px solid rgba(23,61,86,.08);
+  box-shadow:
+    0 22px 60px rgba(23,61,86,.09),
+    0 2px 8px rgba(23,61,86,.04);
+}
+.screen{
+  position:relative;
+  overflow-x:hidden;
+}
+.screen::after{
+  content:"";
+  position:absolute;
+  inset:auto 6% 0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(23,61,86,.12),transparent);
+  pointer-events:none;
+}
+
+/* Typographic rhythm */
+h1,h2,h3{ text-wrap:balance; }
+p{ text-wrap:pretty; }
+.sticker{
+  box-shadow:0 5px 0 rgba(23,61,86,.13);
+  border:1px solid rgba(23,61,86,.05);
+}
+.pill{
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+
+/* Buttons */
+.btn{
+  position:relative;
+  overflow:hidden;
+  letter-spacing:.02em;
+}
+.btn::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.3) 50%,transparent 65%);
+  transform:translateX(-140%);
+  transition:transform .55s ease;
+  pointer-events:none;
+}
+.btn:hover::after{ transform:translateX(140%); }
+.btn.primary{
+  background:linear-gradient(180deg,#214e6a,#173d56);
+}
+.btn.secondary{
+  background:rgba(255,255,255,.78);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+}
+
+/* Better option cards */
+.option,.sat-option,.sun-option,.mon-option,.tue-option,.pass-answer{
+  border-color:rgba(23,61,86,.10)!important;
+  box-shadow:0 7px 16px rgba(23,61,86,.055);
+}
+.option:hover,.sat-option:hover,.sun-option:hover,.mon-option:hover,.tue-option:hover,.pass-answer:hover{
+  box-shadow:0 11px 22px rgba(23,61,86,.10);
+}
+.selected{
+  box-shadow:
+    0 0 0 4px #ffd85a,
+    0 13px 28px rgba(23,61,86,.12)!important;
+}
+
+/* Match / no-match final polish */
+.result.match{
+  background:
+    radial-gradient(circle at 50% 18%,rgba(255,225,105,.30),transparent 16rem),
+    linear-gradient(145deg,#f9e7f0,#dcebf0);
+}
+.result.nomatch{
+  background:
+    radial-gradient(circle at 50% 20%,rgba(218,89,76,.14),transparent 15rem),
+    linear-gradient(145deg,#f0e2df,#e5eaeb);
+}
+.resultword{
+  letter-spacing:-.045em;
+  text-shadow:0 2px 0 rgba(255,255,255,.45);
+}
+.compare span{
+  background:rgba(255,255,255,.76);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(23,61,86,.08);
+}
+
+/* Cards of Destiny refinement */
+.cards-panel{
+  position:relative;
+}
+.cards-panel::before{
+  content:"✦";
+  position:absolute;
+  right:20px;
+  top:16px;
+  font-size:1.1rem;
+  color:#d7b253;
+  opacity:.8;
+}
+.card-front{
+  background:
+    radial-gradient(circle at 50% 0,rgba(255,216,90,.10),transparent 8rem),
+    #fffdf6;
+}
+.card-back{
+  box-shadow:
+    0 16px 32px rgba(16,47,67,.20),
+    inset 0 0 0 1px rgba(255,255,255,.08);
+}
+.destiny-card.pickable{
+  filter:saturate(1.03);
+}
+.destiny-card.chosen{
+  filter:saturate(1.08);
+}
+
+/* Day identity accents */
+.saturday-cover,.sun-question,.mon-question,.tue-question{
+  position:relative;
+}
+.saturday-cover::after,
+.sun-question::after,
+.mon-question::after,
+.tue-question::after{
+  content:"";
+  position:absolute;
+  left:22px; right:22px; top:14px;
+  height:3px;
+  border-radius:99px;
+  opacity:.5;
+}
+.saturday-cover::after{ background:linear-gradient(90deg,#e0b948,#8ec7d7); }
+.sun-question::after{ background:linear-gradient(90deg,#79b7c9,#d9c06b); }
+.mon-question::after{ background:linear-gradient(90deg,#a48b4c,#5c7771); }
+.tue-question::after{ background:linear-gradient(90deg,#6aa8ba,#cab0d8); }
+
+/* Timeline final */
+.trip-day{
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.trip-day:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 26px rgba(23,61,86,.08);
+}
+.trip-line{
+  border:1px solid rgba(23,61,86,.055);
+}
+.trip-line>small{
+  font-variant-numeric:tabular-nums;
+}
+.trip-sub{
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.45);
+}
+
+/* Budget */
+.grand-total,
+.final-panel.money,
+.final-panel.love{
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);
+}
+.budget-breakdown>div:nth-child(odd){
+  background:rgba(23,61,86,.025);
+}
+
+/* Operation Stockholm */
+.operation-lock{
+  position:relative;
+  overflow:hidden;
+}
+.operation-lock::before{
+  content:"";
+  position:absolute;
+  width:120px;height:120px;border-radius:50%;
+  right:-50px;top:-50px;
+  background:rgba(215,178,83,.08);
+}
+.op-countdown strong{
+  font-variant-numeric:tabular-nums;
+}
+.itinerary-secret-box{
+  box-shadow:0 12px 28px rgba(23,61,86,.07);
+}
+.itinerary-secret-box.unlocked{
+  animation:secretGlow 2.4s ease-in-out infinite;
+}
+@keyframes secretGlow{
+  0%,100%{box-shadow:0 12px 28px rgba(23,61,86,.07),0 0 0 0 rgba(215,178,83,0)}
+  50%{box-shadow:0 14px 34px rgba(23,61,86,.10),0 0 0 6px rgba(215,178,83,.12)}
+}
+
+/* Smooth screen apparition */
+.screen > .card{
+  animation:v16ScreenIn .52s cubic-bezier(.18,.8,.2,1) both;
+}
+@keyframes v16ScreenIn{
+  from{opacity:0;transform:translateY(14px) scale(.994)}
+  to{opacity:1;transform:none}
+}
+
+/* iPhone polish */
+@media(max-width:600px){
+  .screen{
+    padding-left:max(7px,env(safe-area-inset-left));
+    padding-right:max(7px,env(safe-area-inset-right));
+  }
+  .card{
+    width:100%;
+    border-radius:26px;
+  }
+  .sticker{
+    font-size:.6rem;
+    letter-spacing:.13em;
+  }
+  .btn{
+    min-height:54px;
+    font-size:.8rem;
+  }
+  .compare{
+    grid-template-columns:1fr!important;
+  }
+  .compare span{
+    min-height:46px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .deck-table{
+    margin-top:18px;
+    margin-bottom:18px;
+  }
+  .trip-day{
+    border-radius:21px;
+  }
+  .trip-line{
+    border-radius:14px;
+  }
+  .op-countdown strong{
+    font-size:1.2rem;
+  }
+}
+
+/* Very narrow iPhones */
+@media(max-width:360px){
+  .sticker{font-size:.55rem}
+  .btn{font-size:.76rem}
+  .trip-day header h3{font-size:1.12rem}
+  .trip-line{grid-template-columns:46px 1fr}
+}
+
+/* Accessibility */
+@media(prefers-reduced-motion:reduce){
+  .itinerary-secret-box.unlocked{animation:none!important}
+  .btn::after{display:none}
+}
+
+.pressed-v16{transform:scale(.985)!important}

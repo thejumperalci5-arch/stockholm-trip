@@ -1,7 +1,7 @@
 const app=document.getElementById("app"),fx=document.getElementById("fx"),rate=.0917;
 
 const SAVE_KEY="stockholmTripV15";
-const TODAY_OVERRIDE=null; // set "2026-09-21" only for manual testing if needed
+const TODAY_OVERRIDE="2026-09-21"; // set "2026-09-21" only for manual testing if needed
 let operationState={phase:0,missionStartedAt:null,giftsReady:false,spaRevealed:false,inside:false,giftsDone:false,photoDone:false,completed:false};
 
 function saveGame(extra={}){
@@ -1335,3 +1335,23 @@ document.addEventListener("click",e=>{
   if(!btn || btn.disabled)return;
   renderOperation();
 });
+
+/* ===== V16 · VISUAL-ONLY POLISH ===== */
+(function(){
+  // Add a subtle page-top accent based on the current screen class.
+  const observer=new MutationObserver(()=>{
+    const screen=document.querySelector(".screen");
+    if(!screen)return;
+    document.body.dataset.scene=
+      [...screen.classList].find(c=>/^(sat|sun|mon|tue|op|trip|pass|cards|saturday|monday|tuesday|final)/.test(c))||"default";
+  });
+  observer.observe(document.getElementById("app"),{childList:true,subtree:true});
+
+  // Make selected options feel immediate on touch without changing logic.
+  document.addEventListener("pointerdown",e=>{
+    const card=e.target.closest(".option,.sat-option,.sun-option,.mon-option,.tue-option,.pass-answer,.destiny-card");
+    if(!card)return;
+    card.classList.add("pressed-v16");
+    setTimeout(()=>card.classList.remove("pressed-v16"),140);
+  },{passive:true});
+})();

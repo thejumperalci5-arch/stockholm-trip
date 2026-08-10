@@ -1,13 +1,28 @@
-STOCKHOLM TRIP V15.4 — FINAL BLOQUEADO
+STOCKHOLM TRIP V16 — FINAL POLISH TEST
 
-NOVEDAD:
-- En cuanto aparece el ITINERARIO COMPLETO aparece también:
-  “DESCUBRIR EL PLAN SECRETO”.
-- El botón está integrado en el propio itinerario.
-- Lleva contador en vivo: DÍAS / HORAS / MIN / SEG.
-- Antes del 21/09/2026 está deshabilitado.
-- Al llegar la fecha se activa automáticamente sin recargar la página.
-- Al pulsarlo abre Operación Estocolmo.
-- El plan real sigue sin revelarse en el itinerario.
+Base: V15.4.
 
-FINAL: usa la fecha real y permanecerá bloqueado hasta el 21/09/2026.
+Cambios únicamente visuales:
+- transiciones más suaves;
+- jerarquía tipográfica afinada;
+- botones y feedback táctil más refinados;
+- MATCH/NO MATCH más contundentes;
+- Cartas del Destino con acabado más limpio;
+- identidad cromática más clara por día;
+- itinerario final más elegante;
+- presupuesto final más legible;
+- Operación Estocolmo más cuidada;
+- contador y bloque secreto con mejor presencia;
+- mejoras para iPhone estrecho;
+- respeta Reducir movimiento.
+
+NO se ha cambiado la lógica:
+- guardado automático;
+- pases;
+- cartas;
+- presupuesto;
+- fechas;
+- desbloqueo;
+- decisiones.
+
+Esta versión mantiene Operación Estocolmo desbloqueada para pruebas.
