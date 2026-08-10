@@ -1,8 +1,12 @@
-STOCKHOLM TRIP V14.1 — START FIX
+STOCKHOLM TRIP V14.2 — GITHUB FIX
 
-Corrección crítica:
-- El botón “EMPEZAR EL JUEGO” no avanzaba porque la función money() se llamaba
-  accidentalmente a sí misma de forma infinita al intentar renderizar el primer día.
-- money(sek) vuelve a mostrar correctamente:
-  “XXX SEK · ~XX,XX €”
-- Se mantiene todo el pulido iPhone de V14.
+Correcciones:
+- Cache-busting en GitHub Pages:
+  styles.css?v=14.2
+  script.js?v=14.2
+- Eliminado el listener global que interceptaba botones primarios para evitar dobles taps.
+- El botón inicial usa addEventListener directamente y type="button".
+- Conserva la corrección money() de V14.1.
+- Mantiene el pulido iPhone de V14.
+
+Subir los 4 archivos a GitHub y hacer Commit changes.

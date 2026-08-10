@@ -19,7 +19,7 @@ let state={i:0,answers:[],resolved:{},spins:{Anaïs:3,Alcides:3},used:{Anaïs:0,
 const eur=n=>(n*rate).toFixed(2).replace(".",",");
 function money(sek){return `${sek} SEK · ~${eur(sek)} €`;}
 const floats=()=>`<span class="float f1">✦</span><span class="float f2"><span class="se-flag" aria-label="Bandera de Suecia"></span></span><span class="float f3">⛵</span><span class="float f4">♡</span>`;
-function welcome(){app.innerHTML=`<section class="screen hero-scene">${floats()}<section class="card hero"><span class="sticker">✈ OPERATION STOCKHOLM</span><h1>STOCKHOLM<span>18 — 22 SEPT · 2026</span></h1><p>Dos personas. Una ciudad.<br><b>Y 3 re-spins por cabeza para negociar con el destino.</b></p><button class="btn primary" id="go">EMPEZAR EL JUEGO →</button><p class="tiny">🎟️ Anaïs ×3 &nbsp; · &nbsp; 🎟️ Alcides ×3 &nbsp; · &nbsp; válidos para todo el viaje</p></section></section>`;document.getElementById("go").onclick=render}
+function welcome(){app.innerHTML=`<section class="screen hero-scene">${floats()}<section class="card hero"><span class="sticker">✈ OPERATION STOCKHOLM</span><h1>STOCKHOLM<span>18 — 22 SEPT · 2026</span></h1><p>Dos personas. Una ciudad.<br><b>Y 3 re-spins por cabeza para negociar con el destino.</b></p><button type="button" class="btn primary" id="go">EMPEZAR EL JUEGO →</button><p class="tiny">🎟️ Anaïs ×3 &nbsp; · &nbsp; 🎟️ Alcides ×3 &nbsp; · &nbsp; válidos para todo el viaje</p></section></section>`;const startBtn=document.getElementById("go"); if(startBtn){startBtn.addEventListener("click",render,{once:true});}}
 function shell(q,inner,cls){return `<section class="screen ${cls}">${cls==="night-scene"?'<div class="stars"></div>':""}<section class="card ${q.theme==="postcard"?"postcard-card":q.theme==="cafe"?"menu-card":"night-card"}"><div class="top"><span class="pill">${q.day}</span><div class="progress"><div style="width:${state.i/data.length*100}%"></div></div><span class="count">${state.i+1}/${data.length}</span></div><div class="head ${q.theme==="cafe"?"menu-title":""}"><div class="mini">DECISIÓN ${state.i+1} · ELECCIÓN SECRETA</div><h2>${q.title}</h2><p>${q.sub}</p></div>${inner}</section></section>`}
 function render(){
  let q=data[state.i],a=state.answers[state.i],inner="";
@@ -1018,16 +1018,4 @@ document.addEventListener("click",e=>{
   if(el && !el.disabled) softTap(8);
 },{passive:true});
 
-/* Prevent accidental double-taps from firing the same action twice. */
-let lastActionAt=0;
-document.addEventListener("click",e=>{
-  const btn=e.target.closest(".btn.primary");
-  if(!btn)return;
-  const now=Date.now();
-  if(now-lastActionAt<280){
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    return;
-  }
-  lastActionAt=now;
-},true);
+
