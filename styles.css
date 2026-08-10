@@ -678,3 +678,37 @@ button:active,.btn:active{transform:scale(.975)}
     scroll-behavior:auto!important;
   }
 }
+
+/* ===== V15 · OPERACIÓN ESTOCOLMO ===== */
+.operation-hub-scene{background:linear-gradient(145deg,#dcebf0,#f5dfaa)}
+.operation-hub,.op-card,.op-spa-card,.op-complete-card{background:#fffaf0;text-align:center;padding:36px}
+.operation-hub h2,.op-card h2,.op-spa-card h2,.op-complete-card h2{font:500 clamp(2.8rem,9vw,5.2rem)/.9 Georgia,serif;margin:18px 0}
+.hub-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:24px 0}
+.operation-lock{border:2px dashed #8a877c;background:#eee9db;border-radius:20px;padding:22px;margin:24px 0}
+.operation-lock.open{border-color:#a88c3e;background:#fff3c7}
+.operation-lock small,.operation-lock strong,.operation-lock span{display:block}.operation-lock strong{font-size:1.35rem;margin:8px}.operation-lock span{font-size:.78rem;color:var(--muted)}
+.reset-link{border:0;background:transparent;color:#9b5d58;font-size:.68rem;text-decoration:underline;padding:10px}
+.op-secret-scene{background:linear-gradient(145deg,#252a29,#847d66)}
+.op-mission-scene{background:linear-gradient(145deg,#d7c68c,#6c837d)}
+.op-reveal-scene{background:linear-gradient(145deg,#303534,#91866f)}
+.op-spa-scene{background:linear-gradient(145deg,#b8dfe8,#d7c599)}
+.op-gift-scene{background:linear-gradient(145deg,#edd4df,#d6c5e4)}
+.op-photo-scene{background:linear-gradient(145deg,#d7e9ed,#efdba9)}
+.op-complete-scene{background:linear-gradient(145deg,#163d55,#d3ad48)}
+.classified-stamp{display:inline-block;border:5px solid #a6423b;color:#a6423b;padding:9px 14px;font-weight:1000;letter-spacing:.12em;transform:rotate(-4deg)}
+.op-lead{font-size:1rem;font-weight:1000;letter-spacing:.14em}
+.mission-rules{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:24px 0}
+.mission-rules>div,.spa-details>div{background:white;border-radius:16px;padding:16px}.mission-rules small,.mission-rules strong,.spa-details small,.spa-details strong{display:block}.mission-rules small,.spa-details small{font-size:.58rem;font-weight:1000;letter-spacing:.12em}.mission-rules strong,.spa-details strong{margin-top:6px}
+.warning-card{background:#292e2d;color:#fff1c7;border-radius:14px;padding:14px;font-weight:1000;margin:20px 0}
+.mission-clock{font:700 clamp(4rem,18vw,8rem)/1 Georgia,serif;margin:25px 0;color:#173d56}
+.redacted-box{background:#222;color:#222;border-radius:6px;padding:18px;margin:24px auto;max-width:380px;letter-spacing:.16em}
+.spa-icon,.gift-big,.photo-big{font-size:4rem;margin:15px}
+.spa-details{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:22px 0}
+.gift-rule{background:#fff;border:2px dashed #bd9c52;border-radius:18px;padding:20px;margin:22px 0}.gift-rule strong,.gift-rule span{display:block}.gift-rule strong{font:700 1.8rem Georgia,serif}.gift-rule span{font-size:.8rem;margin-top:8px}
+.free-night{background:#fff;border-radius:18px;padding:20px;margin:24px 0}.free-night strong,.free-night span{display:block}.free-night span{margin-top:7px;color:var(--muted)}
+@media(max-width:600px){
+ .operation-hub,.op-card,.op-spa-card,.op-complete-card{padding:28px 13px;border-radius:24px}
+ .hub-actions{grid-template-columns:1fr}
+ .mission-rules{grid-template-columns:1fr}
+ .spa-details{grid-template-columns:1fr}
+}

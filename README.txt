@@ -1,9 +1,25 @@
-STOCKHOLM TRIP V14.3 — PASSES FIX
+STOCKHOLM TRIP V15 — OPERACIÓN ESTOCOLMO + GUARDADO AUTOMÁTICO
 
-Corrección de la pantalla “Vale. Ahora toca hacer cuentas”:
-- evita undefined SEK / NaN € usando valores numéricos seguros;
-- refuerza la navegación del botón “DECIDIR LOS PASES”;
-- mantiene las correcciones anteriores;
-- fuerza recarga de JS/CSS con ?v=14.3 para GitHub Pages/Safari.
+NOVEDADES:
+- Guardado automático en localStorage.
+- Si Safari se cierra, el progreso queda guardado.
+- Al volver:
+  · si el cuestionario no está terminado, intenta retomar el día en curso;
+  · si ya está terminado, abre un HUB con itinerario, presupuesto y Operación Estocolmo.
+- Operación Estocolmo permanece bloqueada hasta 21/09/2026.
+- El lunes 21 se desbloquea:
+  FASE I · misión de 100 SEK por persona / 30 minutos
+  FASE II · revelación de Selma City Spa
+  FASE III · intercambio de regalos dentro del spa
+  FASE IV · foto oficial de Estocolmo
+  FINAL · Operación Estocolmo completada
+- El progreso de la Operación también se guarda.
+- Reinicio manual disponible desde el HUB.
+- Mantiene el resto de la web, cartas, pases, presupuesto y iPhone polish.
 
-Sube los cuatro archivos sustituyendo los actuales y haz Commit changes.
+NOTA DE PRUEBA:
+Para probar el desbloqueo antes del 21/09/2026 puedes cambiar temporalmente:
+  const TODAY_OVERRIDE=null;
+por:
+  const TODAY_OVERRIDE="2026-09-21";
+No se recomienda dejar el override activo en la versión final.

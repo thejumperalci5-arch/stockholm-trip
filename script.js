@@ -1,4 +1,53 @@
 const app=document.getElementById("app"),fx=document.getElementById("fx"),rate=.0917;
+
+const SAVE_KEY="stockholmTripV15";
+const TODAY_OVERRIDE=null; // set "2026-09-21" only for manual testing if needed
+let operationState={phase:0,missionStartedAt:null,giftsReady:false,spaRevealed:false,inside:false,giftsDone:false,photoDone:false,completed:false};
+
+function saveGame(extra={}){
+  try{
+    const payload={
+      version:15,
+      savedAt:new Date().toISOString(),
+      state, sat, sun, mon, tue, passes, operationState,
+      ...extra
+    };
+    localStorage.setItem(SAVE_KEY,JSON.stringify(payload));
+  }catch(e){}
+}
+function loadGame(){
+  try{
+    const raw=localStorage.getItem(SAVE_KEY);
+    if(!raw)return false;
+    const p=JSON.parse(raw);
+    if(p.state)Object.assign(state,p.state);
+    if(typeof sat!=="undefined"&&p.sat)Object.assign(sat,p.sat);
+    if(typeof sun!=="undefined"&&p.sun)Object.assign(sun,p.sun);
+    if(typeof mon!=="undefined"&&p.mon)Object.assign(mon,p.mon);
+    if(typeof tue!=="undefined"&&p.tue)Object.assign(tue,p.tue);
+    if(typeof passes!=="undefined"&&p.passes)Object.assign(passes,p.passes);
+    if(p.operationState)Object.assign(operationState,p.operationState);
+    return true;
+  }catch(e){return false}
+}
+function clearGame(){
+  try{localStorage.removeItem(SAVE_KEY)}catch(e){}
+  location.reload();
+}
+function tripCompleted(){
+  try{
+    return !!(tue && tue.resolved && Object.keys(tue.resolved).length>=2);
+  }catch(e){return false}
+}
+function dateKey(){
+  if(TODAY_OVERRIDE)return TODAY_OVERRIDE;
+  const d=new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function operationUnlockedByDate(){
+  return dateKey()>="2026-09-21";
+}
+
 const SWEDEN_FLAG=`<span class="se-flag" aria-label="Bandera de Suecia"></span>`;
 const SEFLAG=`<span class="se-flag" aria-label="Bandera de Suecia"></span>`;
 const data=[
@@ -224,7 +273,27 @@ function officialDay(){
  <div style="text-align:center;margin-top:25px"><div class="approved"> DAY 1 · APPROVED</div><p class="tiny">Re-spins gastados · Anaïs ${state.used["Anaïs"]}/3 · Alcides ${state.used["Alcides"]}/3</p><p class="tiny">Restantes · Anaïs ${state.spins["Anaïs"]}/3 · Alcides ${state.spins["Alcides"]}/3</p><button class="btn primary" id="saturday">CONTINUAR AL SÁBADO 19 →</button><button class="btn secondary" id="again">↻ Repetir viernes</button></div></section></section>`;
  document.getElementById("saturday").onclick=saturdayIntro; again.onclick=()=>{state={i:0,answers:[],resolved:{},spins:{Anaïs:3,Alcides:3},used:{Anaïs:0,Alcides:0},wheelQueue:[],wheelIndex:0,wheelLast:null};welcome()}
 }
-welcome();
+
+function resumeOrStart(){
+  const hasSave=loadGame();
+
+  if(hasSave && tripCompleted()){
+    renderReturnHub();
+    return;
+  }
+
+  // Resume known day/progress where possible.
+  if(hasSave){
+    if(typeof tue!=="undefined" && (tue.i>0 || tue.answers?.length)){ renderTuesday(); return; }
+    if(typeof mon!=="undefined" && (mon.i>0 || mon.answers?.length)){ renderMonday(); return; }
+    if(typeof sun!=="undefined" && (sun.i>0 || sun.answers?.length)){ renderSunday(); return; }
+    if(typeof sat!=="undefined" && (sat.i>0 || sat.answers?.length)){ renderSaturday(); return; }
+    if(state && (state.i>0 || state.a?.length)){ renderQ(); return; }
+  }
+  welcome();
+}
+resumeOrStart();
+
 
 
 /* ===== V7 · SÁBADO 19 ===== */
@@ -1036,3 +1105,184 @@ document.addEventListener("click",function(e){
     },30);
   }
 });
+
+/* ===== V15 · AUTOGUARDADO ===== */
+document.addEventListener("click",()=>setTimeout(()=>saveGame(),50),true);
+window.addEventListener("pagehide",()=>saveGame());
+document.addEventListener("visibilitychange",()=>{if(document.hidden)saveGame()});
+
+
+/* ===== V15 · OPERACIÓN ESTOCOLMO ===== */
+function renderReturnHub(){
+  const unlocked=operationUnlockedByDate();
+  app.innerHTML=`<section class="screen operation-hub-scene"><section class="card operation-hub">
+    <span class="sticker">STOCKHOLM · 2026</span>
+    <h2>Todo sigue aquí.</h2>
+    <p>No tienes que repetir nada. Tus decisiones, cartas, pases y presupuesto siguen guardados en este iPhone.</p>
+
+    <div class="hub-actions">
+      <button class="btn primary" id="viewTrip">🗺️ VER NUESTRO VIAJE</button>
+      <button class="btn secondary" id="viewBudget">💰 VER PRESUPUESTO</button>
+    </div>
+
+    <div class="operation-lock ${unlocked?"open":""}">
+      <small>21 · 09 · 2026</small>
+      <strong>${unlocked?"🔓 OPERACIÓN ESTOCOLMO":"🔒 OPERACIÓN ESTOCOLMO"}</strong>
+      <span>${unlocked?"Acceso autorizado.":"Bloqueado hasta el 21 de septiembre."}</span>
+      ${unlocked?`<button class="btn primary" id="openOperation">ABRIR OPERACIÓN →</button>`:""}
+    </div>
+
+    <button class="reset-link" id="resetTrip">Reiniciar viaje</button>
+  </section></section>`;
+
+  document.getElementById("viewTrip").onclick=()=>renderFullTripV12?.() || renderFullTrip();
+  document.getElementById("viewBudget").onclick=()=>typeof renderSmartBudget==="function"?renderSmartBudget():renderFullTrip();
+  if(unlocked)document.getElementById("openOperation").onclick=renderOperation;
+  document.getElementById("resetTrip").onclick=()=>{if(confirm("¿Seguro? Se borrará todo el progreso guardado."))clearGame()};
+}
+function renderOperation(){
+  saveGame();
+  if(operationState.completed){operationComplete();return}
+  if(operationState.photoDone){operationComplete();return}
+  if(operationState.giftsDone){operationPhoto();return}
+  if(operationState.inside){operationGifts();return}
+  if(operationState.spaRevealed){operationSpa();return}
+  if(operationState.giftsReady){operationReveal();return}
+  if(operationState.missionStartedAt){operationMissionActive();return}
+  operationIntro();
+}
+function operationIntro(){
+  app.innerHTML=`<section class="screen op-secret-scene"><section class="card op-card">
+   <div class="classified-stamp">OPERACIÓN ESTOCOLMO</div>
+   <h2>FASE I</h2>
+   <p class="op-lead">MISIÓN PARA DOS</p>
+   <div class="mission-rules">
+     <div><small>PRESUPUESTO</small><strong>100 SEK · ~${eur(100)} € CADA UNO</strong></div>
+     <div><small>TIEMPO</small><strong>30 MINUTOS</strong></div>
+     <div><small>OBJETIVO</small><strong>Compra algo que te recuerde al otro.</strong></div>
+   </div>
+   <p>Puede ser bonito. Puede ser útil. Puede ser completamente estúpido.</p>
+   <div class="warning-card">⚠️ NO PODÉIS ENSEÑARLO TODAVÍA</div>
+   <button class="btn primary" id="startMission">COMENZAR MISIÓN →</button>
+  </section></section>`;
+  document.getElementById("startMission").onclick=()=>{
+    operationState.phase=1;
+    operationState.missionStartedAt=Date.now();
+    saveGame();
+    operationMissionActive();
+  };
+}
+function missionRemaining(){
+  if(!operationState.missionStartedAt)return 30*60;
+  return Math.max(0,30*60-Math.floor((Date.now()-operationState.missionStartedAt)/1000));
+}
+let missionTimer=null;
+function operationMissionActive(){
+  const sec=missionRemaining();
+  app.innerHTML=`<section class="screen op-mission-scene"><section class="card op-card">
+   <span class="sticker">FASE I · EN CURSO</span>
+   <h2>Que empiece la búsqueda.</h2>
+   <div class="mission-clock" id="missionClock"></div>
+   <p>100 SEK. Algo que te recuerde al otro. Y luego tendrás que explicar por qué.</p>
+   <div class="warning-card">🎁 GUÁRDALO. NO LO ENSEÑES.</div>
+   <button class="btn primary" id="giftsReady">YA LO TENEMOS →</button>
+  </section></section>`;
+  function tick(){
+    const r=missionRemaining(),m=Math.floor(r/60),s=r%60;
+    const el=document.getElementById("missionClock");
+    if(el)el.textContent=`${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+    if(r>0)missionTimer=setTimeout(tick,1000);
+  }
+  tick();
+  document.getElementById("giftsReady").onclick=()=>{
+    if(missionTimer)clearTimeout(missionTimer);
+    operationState.giftsReady=true;
+    operationState.phase=2;
+    saveGame();
+    operationReveal();
+  };
+}
+function operationReveal(){
+  app.innerHTML=`<section class="screen op-reveal-scene"><section class="card op-card">
+    <span class="sticker">FASE II</span>
+    <h2>Misión completada.</h2>
+    <p>Guardad los regalos. Todavía no podéis abrirlos.</p>
+    <div class="redacted-box">████████████████</div>
+    <button class="btn primary" id="revealDestination">REVELAR SIGUIENTE DESTINO →</button>
+  </section></section>`;
+  document.getElementById("revealDestination").onclick=()=>{
+    fx.innerHTML=`<div class="overlay classified-count"><div class="revealbox"><div class="loading">DESCLASIFICANDO DESTINO…</div><div class="countdown">3</div></div></div>`;
+    setTimeout(()=>{fx.innerHTML=`<div class="overlay classified-count"><div class="countdown">2</div></div>`},550);
+    setTimeout(()=>{fx.innerHTML=`<div class="overlay classified-count"><div class="countdown">1</div></div>`},1100);
+    setTimeout(()=>{
+      fx.innerHTML="";
+      operationState.spaRevealed=true;
+      operationState.phase=3;
+      saveGame();
+      operationSpa();
+    },1650);
+  };
+}
+function operationSpa(){
+  app.innerHTML=`<section class="screen op-spa-scene"><section class="card op-spa-card">
+    <span class="sticker">FASE II · DESTINO REVELADO</span>
+    <div class="spa-icon">♨️</div>
+    <h2>Selma City Spa.</h2>
+    <p>Piscina exterior climatizada, vistas sobre Estocolmo y un rato sin tener que decidir absolutamente nada.</p>
+    <div class="spa-details">
+      <div><small>HORA OBJETIVO</small><strong>16:30</strong></div>
+      <div><small>REGLA</small><strong>El regalo sigue cerrado.</strong></div>
+    </div>
+    <button class="btn primary" id="insideSpa">YA ESTAMOS DENTRO ♨️</button>
+  </section></section>`;
+  document.getElementById("insideSpa").onclick=()=>{
+    operationState.inside=true;
+    operationState.phase=4;
+    saveGame();
+    operationGifts();
+  };
+}
+function operationGifts(){
+  app.innerHTML=`<section class="screen op-gift-scene"><section class="card op-card">
+    <span class="sticker">FASE III DESBLOQUEADA</span>
+    <div class="gift-big">🎁</div>
+    <h2>Ahora sí.</h2>
+    <p>¿Te acuerdas de eso que llevas un rato sin poder enseñar?</p>
+    <div class="gift-rule"><strong>Dáselo.</strong><span>Y antes de abrirlo, tienes que explicar por qué te recordó al otro.</span></div>
+    <button class="btn primary" id="giftsDone">REGALOS ENTREGADOS 💜</button>
+  </section></section>`;
+  document.getElementById("giftsDone").onclick=()=>{
+    operationState.giftsDone=true;
+    operationState.phase=5;
+    saveGame();
+    operationPhoto();
+  };
+}
+function operationPhoto(){
+  app.innerHTML=`<section class="screen op-photo-scene"><section class="card op-card">
+    <span class="sticker">ÚLTIMA MISIÓN</span>
+    <div class="photo-big">📸</div>
+    <h2>Nuestra foto de Estocolmo.</h2>
+    <p>No tiene que ser perfecta. Ni estar bien encuadrada.</p>
+    <p><b>Solo tiene que ser nuestra.</b></p>
+    <button class="btn primary" id="photoDone">FOTO HECHA →</button>
+  </section></section>`;
+  document.getElementById("photoDone").onclick=()=>{
+    operationState.photoDone=true;
+    operationState.completed=true;
+    operationState.phase=6;
+    saveGame();
+    operationComplete();
+  };
+}
+function operationComplete(){
+  app.innerHTML=`<section class="screen op-complete-scene"><section class="card op-complete-card">
+    <div class="approved">OPERACIÓN ESTOCOLMO · COMPLETADA</div>
+    <h2>Ya está.</h2>
+    <p>Sorprendentemente, seguimos llevándonos bien.</p>
+    <div class="free-night"><strong>🍴 Cena improvisada</strong><span>🌙 Y a partir de aquí hacemos lo que nos dé la gana.</span></div>
+    <button class="btn primary" id="backTrip">🗺️ VOLVER A NUESTRO VIAJE</button>
+  </section></section>`;
+  confetti();
+  document.getElementById("backTrip").onclick=renderReturnHub;
+}
