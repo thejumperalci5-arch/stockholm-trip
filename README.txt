@@ -1,12 +1,13 @@
-STOCKHOLM TRIP V15.3 — TEST DESBLOQUEADO
+STOCKHOLM TRIP V15.4 — FINAL BLOQUEADO
 
-CORRECCIÓN:
-- Encontrado el motivo exacto por el que “DECIDIR LOS PASES” no avanzaba.
-- Faltaba declarar el estado `passes`.
-- `passesIntro()` podía mostrarse, pero `goCityDecision()` se detenía al leer `passes.goCity`.
-- Añadido:
-  let passes={transport:null,goCity:null};
-- Eliminado un fallback antiguo que llamaba a `renderPassDecision()`, función que no existe.
-- Corregido el total visible de atracciones para usar `individualRelevant`.
-- JavaScript validado con `node --check`.
-- Cache bust actualizado a ?v=15.3.
+NOVEDAD:
+- En cuanto aparece el ITINERARIO COMPLETO aparece también:
+  “DESCUBRIR EL PLAN SECRETO”.
+- El botón está integrado en el propio itinerario.
+- Lleva contador en vivo: DÍAS / HORAS / MIN / SEG.
+- Antes del 21/09/2026 está deshabilitado.
+- Al llegar la fecha se activa automáticamente sin recargar la página.
+- Al pulsarlo abre Operación Estocolmo.
+- El plan real sigue sin revelarse en el itinerario.
+
+FINAL: usa la fecha real y permanecerá bloqueado hasta el 21/09/2026.

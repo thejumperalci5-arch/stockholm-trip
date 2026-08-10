@@ -735,3 +735,52 @@ button:active,.btn:active{transform:scale(.975)}
  .op-countdown>div{padding:8px 4px}
  .op-countdown strong{font-size:1.15rem}
 }
+
+/* ===== V15.4 · PLAN SECRETO EN EL ITINERARIO ===== */
+.itinerary-secret-box{
+  margin:28px 0 8px;
+  padding:22px 16px;
+  border:2px dashed #8d8370;
+  border-radius:20px;
+  background:#eee8da;
+  text-align:center;
+}
+.itinerary-secret-box.unlocked{
+  background:#fff2c5;
+  border-color:#b18c31;
+}
+.itinerary-secret-box small{
+  display:block;
+  font-size:.62rem;
+  font-weight:1000;
+  letter-spacing:.13em;
+}
+.itinerary-secret-box h3{
+  font:700 1.5rem/1.1 Georgia,serif;
+  margin:10px 0 7px;
+}
+.itinerary-secret-box p{
+  margin:0 auto 12px;
+  max-width:520px;
+  color:var(--muted);
+  font-size:.78rem;
+  line-height:1.45;
+}
+.secret-plan-btn:disabled{
+  cursor:not-allowed;
+  opacity:.48;
+  filter:grayscale(.65);
+  transform:none!important;
+}
+.itinerary-secret-box .op-countdown{
+  margin:15px auto;
+}
+@media(max-width:600px){
+  .itinerary-secret-box{
+    margin:22px 0 6px;
+    padding:19px 10px;
+  }
+  .itinerary-secret-box h3{
+    font-size:1.3rem;
+  }
+}

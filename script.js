@@ -1,7 +1,7 @@
 const app=document.getElementById("app"),fx=document.getElementById("fx"),rate=.0917;
 
 const SAVE_KEY="stockholmTripV15";
-const TODAY_OVERRIDE="2026-09-21"; // set "2026-09-21" only for manual testing if needed
+const TODAY_OVERRIDE=null; // set "2026-09-21" only for manual testing if needed
 let operationState={phase:0,missionStartedAt:null,giftsReady:false,spaRevealed:false,inside:false,giftsDone:false,photoDone:false,completed:false};
 
 function saveGame(extra={}){
@@ -57,11 +57,11 @@ function operationCountdown(){
 }
 function countdownHTML(){
   const c=operationCountdown();
-  return `<div class="op-countdown">
-    <div><strong>${String(c.days).padStart(2,"0")}</strong><small>DÍAS</small></div>
-    <div><strong>${String(c.hours).padStart(2,"0")}</strong><small>HORAS</small></div>
-    <div><strong>${String(c.mins).padStart(2,"0")}</strong><small>MIN</small></div>
-    <div><strong>${String(c.secs).padStart(2,"0")}</strong><small>SEG</small></div>
+  return `<div class="op-countdown" data-operation-countdown>
+    <div><strong data-unit="days">${String(c.days).padStart(2,"0")}</strong><small>DÍAS</small></div>
+    <div><strong data-unit="hours">${String(c.hours).padStart(2,"0")}</strong><small>HORAS</small></div>
+    <div><strong data-unit="mins">${String(c.mins).padStart(2,"0")}</strong><small>MIN</small></div>
+    <div><strong data-unit="secs">${String(c.secs).padStart(2,"0")}</strong><small>SEG</small></div>
   </div>`;
 }
 
@@ -930,6 +930,16 @@ function renderFullTrip(){
       <div><span>Martes 22</span><b>${money(b.d5)}</b></div>
     </div>
 
+    <div class="itinerary-secret-box ${operationUnlockedByDate()?"unlocked":""}">
+      <small>🔒 LUNES 21 · ARCHIVO CLASIFICADO</small>
+      <h3>${operationUnlockedByDate()?"Operación Estocolmo está disponible.":"Hay una parte del viaje que todavía no puedes conocer."}</h3>
+      <p>${operationUnlockedByDate()?"Ha llegado el momento de descubrir el plan secreto.":"Se desbloqueará automáticamente cuando llegue el día."}</p>
+      ${countdownHTML()}
+      <button class="btn primary secret-plan-btn" id="secretPlanBtn" ${operationUnlockedByDate()?"":"disabled"}>
+        ${operationUnlockedByDate()?"🔓 DESCUBRIR EL PLAN SECRETO":"🔒 DESCUBRIR EL PLAN SECRETO"}
+      </button>
+    </div>
+
     <div class="final-message">
       <b>Listo. Ahora a ver si lo cumplimos.</b>
       <span>Spoiler: seguramente improvisemos la mitad. 😌</span>
@@ -1299,3 +1309,29 @@ function resumeOrStartV152(){
   welcome();
 }
 resumeOrStartV152();
+
+/* ===== V15.4 · PLAN SECRETO DESDE EL ITINERARIO ===== */
+function refreshOperationCountdowns(){
+  const c=operationCountdown();
+  document.querySelectorAll("[data-operation-countdown]").forEach(box=>{
+    const values={days:c.days,hours:c.hours,mins:c.mins,secs:c.secs};
+    Object.entries(values).forEach(([unit,value])=>{
+      const el=box.querySelector(`[data-unit="${unit}"]`);
+      if(el)el.textContent=String(value).padStart(2,"0");
+    });
+  });
+
+  if(operationUnlockedByDate()){
+    document.querySelectorAll("#secretPlanBtn").forEach(btn=>{
+      btn.disabled=false;
+      btn.textContent="🔓 DESCUBRIR EL PLAN SECRETO";
+    });
+    document.querySelectorAll(".itinerary-secret-box").forEach(box=>box.classList.add("unlocked"));
+  }
+}
+setInterval(refreshOperationCountdowns,1000);
+document.addEventListener("click",e=>{
+  const btn=e.target.closest("#secretPlanBtn");
+  if(!btn || btn.disabled)return;
+  renderOperation();
+});
