@@ -1094,3 +1094,31 @@ p{ text-wrap:pretty; }
 @media(max-width:600px){
  .sound-toggle{width:42px;height:42px;right:max(10px,env(safe-area-inset-right));top:max(10px,env(safe-area-inset-top))}
 }
+
+
+/* ===== V16.6 · REVIEW / EDIT ===== */
+.review-scene,.review-edit-scene{background:linear-gradient(145deg,#dcebf0,#f5e2ae)}
+.review-card,.review-edit-card{background:#fffaf0;padding:34px}
+.review-card h2,.review-edit-card h2{font:500 clamp(2.6rem,9vw,5rem)/.9 Georgia,serif;margin:17px 0}
+.review-days{display:grid;gap:16px;margin:26px 0}
+.review-day{border:1px solid rgba(23,61,86,.10);border-radius:20px;overflow:hidden;background:white}
+.review-day header{padding:11px 14px;background:#173d56;color:#fff}
+.review-day header small{font-weight:1000;letter-spacing:.13em}
+.review-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:14px;border-bottom:1px solid rgba(23,61,86,.08)}
+.review-row:last-child{border-bottom:0}
+.review-row small,.review-row strong,.review-row span{display:block}
+.review-row>div>small{font-size:.6rem;font-weight:1000;color:var(--muted)}
+.review-row strong{font:700 1.05rem Georgia,serif;margin:3px 0}
+.review-row span{font-size:.7rem;color:var(--muted)}
+.review-change{border:0;border-radius:12px;background:#edf3f5;color:#173d56;padding:10px;font-size:.62rem;font-weight:1000;cursor:pointer}
+.review-options{display:grid;gap:11px;margin:24px 0}
+.review-option{display:grid;grid-template-columns:50px 1fr auto;gap:10px;align-items:center;text-align:left;border:2px solid rgba(23,61,86,.10);background:#fff;border-radius:18px;padding:13px;color:#173d56;cursor:pointer}
+.review-option>span{font-size:2rem;text-align:center}
+.review-option strong,.review-option small{display:block}.review-option strong{font:700 1.05rem Georgia,serif}.review-option small{font-size:.7rem;color:var(--muted);margin-top:4px}.review-option em{font-style:normal;font-size:.65rem;font-weight:900;text-align:right}
+.review-option.selected{border-color:#d7b253;box-shadow:0 0 0 4px rgba(255,216,90,.45)}
+.review-entry{margin:18px 0}
+@media(max-width:600px){
+ .review-card,.review-edit-card{padding:27px 12px;border-radius:24px}
+ .review-row{grid-template-columns:1fr}.review-change{width:100%;min-height:42px}
+ .review-option{grid-template-columns:44px 1fr}.review-option em{grid-column:2;text-align:left}
+}

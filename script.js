@@ -1416,18 +1416,18 @@ const TripSound=(()=>{
       noise(.10,.055,.05,420);
     },
     shuffle(){
-      noise(.13,.15,0,650);
-      noise(.12,.14,.12,760);
-      noise(.13,.15,.24,620);
-      noise(.10,.12,.36,850);
-      tone(145,.08,"sine",.045,.02,205);
-      tone(185,.08,"sine",.045,.15,250);
-      tone(155,.09,"sine",.04,.29,220);
+      /* Barajado suave: varias pasadas de papel, sin graves ni golpes. */
+      noise(.085,.040,0,1500);
+      noise(.080,.035,.085,1850);
+      noise(.090,.038,.175,1400);
+      noise(.075,.030,.270,2100);
+      noise(.065,.024,.350,1700);
     },
     card(){
-      noise(.075,.045,0,1250);
-      tone(260,.09,"sine",.045,.015,390);
-      tone(520,.10,"sine",.035,.075,610);
+      /* Giro suave: pequeño roce de papel, sin campanilla ni golpe tonal. */
+      noise(.055,.018,0,1700);
+      noise(.045,.012,.045,2300);
+      tone(210,.055,"sine",.012,.018,255);
     },
     stamp(){
       noise(.055,.18,0,300);
@@ -1552,3 +1552,178 @@ document.addEventListener("click",e=>{
     TripSound.play("shuffle");
   }
 },true);
+
+
+/* ===== V16.4 · CARD SOUND DEBOUNCE ===== */
+let v164LastCardSound=0;
+const v164OriginalPlay=TripSound.play;
+TripSound.play=function(name){
+  if(name==="card"){
+    const now=Date.now();
+    if(now-v164LastCardSound<260)return;
+    v164LastCardSound=now;
+  }
+  return v164OriginalPlay(name);
+};
+
+
+/* ===== V16.5 · SHUFFLE SOUND DEBOUNCE ===== */
+let v165LastShuffleSound=0;
+const v165PrevPlay=TripSound.play;
+TripSound.play=function(name){
+  if(name==="shuffle"){
+    const now=Date.now();
+    if(now-v165LastShuffleSound<700)return;
+    v165LastShuffleSound=now;
+  }
+  return v165PrevPlay(name);
+};
+
+
+/* ===== V16.6 · REVISAR Y CAMBIAR DECISIONES ===== */
+function reviewTrip(){
+  const sections=[
+    {day:"VIERNES 18",key:"fri",data:data,resolved:state.resolved},
+    {day:"SÁBADO 19",key:"sat",data:saturdayData,resolved:sat.resolved},
+    {day:"DOMINGO 20",key:"sun",data:sundayData,resolved:sun.resolved},
+    {day:"LUNES 21",key:"mon",data:mondayData,resolved:mon.resolved},
+    {day:"MARTES 22",key:"tue",data:tuesdayData,resolved:tue.resolved}
+  ];
+
+  app.innerHTML=`<section class="screen review-scene"><section class="card review-card">
+    <span class="sticker">REVISIÓN DEL VIAJE</span>
+    <h2>¿Cambiamos de idea?</h2>
+    <p>Podéis revisar todas las decisiones finales. Cambiar una opción actualizará el itinerario y el presupuesto guardados.</p>
+
+    <div class="review-days">
+      ${sections.map(s=>`
+        <section class="review-day">
+          <header><small>${s.day}</small></header>
+          ${s.data.map((q,i)=>{
+            const key=s.resolved?.[i];
+            const o=q.opts?.find(x=>x.k===key);
+            if(!o)return "";
+            return `<div class="review-row">
+              <div>
+                <small>${q.time||""}</small>
+                <strong>${o.e||"✦"} ${o.t}</strong>
+                <span>${o.d||""}</span>
+              </div>
+              <button class="review-change" data-review-day="${s.key}" data-review-index="${i}">CAMBIAR</button>
+            </div>`;
+          }).join("")}
+        </section>
+      `).join("")}
+
+      ${sat.dinnerPlace?`<section class="review-day"><header><small>SÁBADO · RESTAURANTE</small></header>
+        <div class="review-row"><div><strong>🍽️ ${sat.dinnerPlace==="G"?"Stockholms Gästabud":sat.dinnerPlace==="T"?"Tradition":"Restaurante sorpresa"}</strong><span>Subdecisión de la cena sueca.</span></div><button class="review-change" data-special="dinner">CAMBIAR</button></div>
+      </section>`:""}
+
+      ${sun.archipelago?`<section class="review-day"><header><small>DOMINGO · ARCHIPIÉLAGO</small></header>
+        <div class="review-row"><div><strong>⛴️ ${sun.archipelago==="V"?"Vaxholm":sun.archipelago==="C"?"Crucero panorámico":"Naturaleza"}</strong><span>Ruta elegida para el archipiélago.</span></div><button class="review-change" data-special="archipelago">CAMBIAR</button></div>
+      </section>`:""}
+
+      <section class="review-day">
+        <header><small>PASES</small></header>
+        <div class="review-row"><div><strong>🎟️ ${passes.goCity?"Go City":"Sin Go City"}</strong><span>Decisión del pase turístico.</span></div><button class="review-change" data-special="gocity">CAMBIAR</button></div>
+        <div class="review-row"><div><strong>🚇 ${passes.transport?"Bono de transporte":"Billetes sueltos"}</strong><span>Decisión de transporte.</span></div><button class="review-change" data-special="transport">CAMBIAR</button></div>
+      </section>
+    </div>
+
+    <div class="review-actions">
+      <button class="btn primary" id="reviewDone">GUARDAR Y VOLVER AL ITINERARIO →</button>
+    </div>
+  </section></section>`;
+
+  document.querySelectorAll("[data-review-day]").forEach(b=>b.onclick=()=>openReviewChoice(b.dataset.reviewDay,Number(b.dataset.reviewIndex)));
+  document.querySelectorAll("[data-special]").forEach(b=>b.onclick=()=>openSpecialReview(b.dataset.special));
+  document.getElementById("reviewDone").onclick=()=>{saveGame();renderFullTripV12?.() || renderFullTrip()};
+}
+
+function reviewSource(day){
+  if(day==="fri")return {data,resolved:state.resolved,answers:state.answers||state.a};
+  if(day==="sat")return {data:saturdayData,resolved:sat.resolved,answers:sat.answers};
+  if(day==="sun")return {data:sundayData,resolved:sun.resolved,answers:sun.answers};
+  if(day==="mon")return {data:mondayData,resolved:mon.resolved,answers:mon.answers};
+  if(day==="tue")return {data:tuesdayData,resolved:tue.resolved,answers:tue.answers};
+  return null;
+}
+
+function openReviewChoice(day,index){
+  const src=reviewSource(day),q=src?.data?.[index];
+  if(!src||!q)return;
+  const current=src.resolved[index];
+
+  app.innerHTML=`<section class="screen review-edit-scene"><section class="card review-edit-card">
+    <span class="sticker">CAMBIAR DECISIÓN</span>
+    <h2>${q.title}</h2>
+    <p>Elige la nueva opción definitiva.</p>
+    <div class="review-options">
+      ${q.opts.map(o=>`<button class="review-option ${current===o.k?"selected":""}" data-new-key="${o.k}">
+        <span>${o.e||"✦"}</span><div><strong>${o.t}</strong><small>${o.d||""}</small></div><em>${o.sek?money(o.sek):"GRATIS"}</em>
+      </button>`).join("")}
+    </div>
+    <button class="btn secondary" id="cancelReview">← NO CAMBIAR</button>
+  </section></section>`;
+
+  document.querySelectorAll("[data-new-key]").forEach(b=>b.onclick=()=>{
+    const k=b.dataset.newKey;
+    src.resolved[index]=k;
+    if(src.answers)src.answers[index]=k;
+    saveGame();
+    TripSound?.play?.("select");
+    reviewTrip();
+  });
+  document.getElementById("cancelReview").onclick=reviewTrip;
+}
+
+function openSpecialReview(type){
+  if(type==="dinner"){
+    app.innerHTML=`<section class="screen review-edit-scene"><section class="card review-edit-card">
+      <span class="sticker">CAMBIAR RESTAURANTE</span><h2>Cena sueca.</h2>
+      <div class="review-options">
+        <button class="review-option" data-special-value="G"><span>🥘</span><div><strong>Stockholms Gästabud</strong><small>Acogedor y tradicional.</small></div></button>
+        <button class="review-option" data-special-value="T"><span>🕯️</span><div><strong>Tradition</strong><small>Clásico y algo más elegante.</small></div></button>
+        <button class="review-option" data-special-value="S"><span>🎁</span><div><strong>Restaurante sorpresa</strong><small>Dejarlo abierto.</small></div></button>
+      </div><button class="btn secondary" id="cancelReview">← NO CAMBIAR</button></section></section>`;
+    document.querySelectorAll("[data-special-value]").forEach(b=>b.onclick=()=>{sat.dinnerPlace=b.dataset.specialValue;saveGame();reviewTrip()});
+  }else if(type==="archipelago"){
+    app.innerHTML=`<section class="screen review-edit-scene"><section class="card review-edit-card">
+      <span class="sticker">CAMBIAR RUTA</span><h2>Archipiélago.</h2>
+      <div class="review-options">
+        <button class="review-option" data-special-value="V"><span>🏘️</span><div><strong>Vaxholm</strong></div></button>
+        <button class="review-option" data-special-value="C"><span>⛴️</span><div><strong>Crucero panorámico</strong></div></button>
+        <button class="review-option" data-special-value="N"><span>🌲</span><div><strong>Naturaleza</strong></div></button>
+      </div><button class="btn secondary" id="cancelReview">← NO CAMBIAR</button></section></section>`;
+    document.querySelectorAll("[data-special-value]").forEach(b=>b.onclick=()=>{sun.archipelago=b.dataset.specialValue;saveGame();reviewTrip()});
+  }else if(type==="gocity"){
+    passes.goCity=!passes.goCity;saveGame();reviewTrip();return;
+  }else if(type==="transport"){
+    passes.transport=!passes.transport;saveGame();reviewTrip();return;
+  }
+  const cancel=document.getElementById("cancelReview");if(cancel)cancel.onclick=reviewTrip;
+}
+
+/* Add review buttons whenever final/hub screens are rendered. */
+const v166Observer=new MutationObserver(()=>{
+  if(document.getElementById("reviewTripBtn"))return;
+  const full=document.querySelector(".full-trip-card");
+  if(full){
+    const target=full.querySelector(".final-message")||full.lastElementChild;
+    const wrap=document.createElement("div");
+    wrap.className="review-entry";
+    wrap.innerHTML=`<button class="btn secondary" id="reviewTripBtn">✏️ REVISAR / CAMBIAR DECISIONES</button>`;
+    target?.before(wrap);
+    document.getElementById("reviewTripBtn").onclick=reviewTrip;
+    return;
+  }
+  const hub=document.querySelector(".operation-hub");
+  if(hub && !document.getElementById("reviewTripBtn")){
+    const wrap=document.createElement("div");
+    wrap.className="review-entry";
+    wrap.innerHTML=`<button class="btn secondary" id="reviewTripBtn">✏️ REVISAR / CAMBIAR DECISIONES</button>`;
+    hub.querySelector(".operation-lock")?.before(wrap);
+    document.getElementById("reviewTripBtn").onclick=reviewTrip;
+  }
+});
+v166Observer.observe(document.getElementById("app"),{childList:true,subtree:true});

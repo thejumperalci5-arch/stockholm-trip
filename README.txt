@@ -1,10 +1,9 @@
-STOCKHOLM TRIP V16.3 — SOUND TUNING
-
-Cambios:
-- BARAJADO: sonido más claro, más largo y detección reforzada durante la animación.
-- NO MATCH: volumen y presencia aumentados.
-- GIRO/ELECCIÓN DE CARTA: sonido suavizado; eliminado el ping agudo irritante.
-- Se mantienen todos los demás sonidos y la lógica de V16.2.
-- Cache bust ?v=16.3.
-
+STOCKHOLM TRIP V16.6 — REVIEW / EDIT
+- Tras terminar aparece “REVISAR / CAMBIAR DECISIONES”.
+- Se pueden revisar los cinco días.
+- Se puede cambiar cualquier decisión final.
+- También restaurante sueco, ruta del archipiélago, Go City y transporte.
+- Al cambiar, se guarda automáticamente y se actualizan itinerario/presupuesto.
+- No obliga a repetir MATCH/NO MATCH ni cartas para una corrección posterior.
+- Mantiene sonidos V16.5 y todo el guardado automático.
 TEST: Operación Estocolmo desbloqueada.
