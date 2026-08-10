@@ -1,12 +1,9 @@
-STOCKHOLM TRIP V14.2 — GITHUB FIX
+STOCKHOLM TRIP V14.3 — PASSES FIX
 
-Correcciones:
-- Cache-busting en GitHub Pages:
-  styles.css?v=14.2
-  script.js?v=14.2
-- Eliminado el listener global que interceptaba botones primarios para evitar dobles taps.
-- El botón inicial usa addEventListener directamente y type="button".
-- Conserva la corrección money() de V14.1.
-- Mantiene el pulido iPhone de V14.
+Corrección de la pantalla “Vale. Ahora toca hacer cuentas”:
+- evita undefined SEK / NaN € usando valores numéricos seguros;
+- refuerza la navegación del botón “DECIDIR LOS PASES”;
+- mantiene las correcciones anteriores;
+- fuerza recarga de JS/CSS con ?v=14.3 para GitHub Pages/Safari.
 
-Subir los 4 archivos a GitHub y hacer Commit changes.
+Sube los cuatro archivos sustituyendo los actuales y haz Commit changes.
