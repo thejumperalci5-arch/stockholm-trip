@@ -1069,3 +1069,28 @@ p{ text-wrap:pretty; }
 }
 
 .pressed-v16{transform:scale(.985)!important}
+
+
+/* ===== V16.2 · SOUND UI ===== */
+.sound-toggle{
+  position:fixed;
+  z-index:9999;
+  right:max(12px,env(safe-area-inset-right));
+  top:max(12px,env(safe-area-inset-top));
+  width:44px;height:44px;
+  border:1px solid rgba(23,61,86,.10);
+  border-radius:50%;
+  background:rgba(255,250,240,.88);
+  box-shadow:0 8px 24px rgba(23,61,86,.13);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  font-size:1rem;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.sound-toggle:active{transform:scale(.93)}
+@media(max-width:600px){
+ .sound-toggle{width:42px;height:42px;right:max(10px,env(safe-area-inset-right));top:max(10px,env(safe-area-inset-top))}
+}

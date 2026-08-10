@@ -723,7 +723,7 @@ function mondayOfficial(){
 
 /* ===== V10 · DÍA 5 · MARTES 22 ===== */
 const tuesdayData=[
- {time:"09:30",kind:"morning",title:"Última mañana. ¿Cómo la gastamos?",sub:"No queda mucho viaje, así que toca elegir bien el ritmo.",alc:"A",opts:[
+ {time:"09:30",kind:"morning",title:"Última mañana. ¿Cómo la gastamos?",sub:"No queda mucho viaje, así que toca elegir bien el ritmo.",alc:"B",opts:[
   {k:"A",e:"🚶",t:"Último paseo",d:"Volver a caminar por Estocolmo sin perseguir atracciones.",sek:0},
   {k:"B",e:"☕",t:"Despedida con fika",d:"Sentarnos, pedir algo rico y fingir que el avión no existe.",sek:140},
   {k:"C",e:"📸",t:"Cazar últimas fotos",d:"Volver a nuestros rincones favoritos y llenar el carrete.",sek:0}]},
@@ -1355,3 +1355,167 @@ document.addEventListener("click",e=>{
     setTimeout(()=>card.classList.remove("pressed-v16"),140);
   },{passive:true});
 })();
+
+
+/* ===== V16.2 · SOUND DESIGN (Web Audio, sin archivos externos) ===== */
+const TripSound=(()=>{
+  let ctx=null, master=null, enabled=true;
+  try{
+    const saved=localStorage.getItem("stockholmTripSound");
+    if(saved!==null) enabled=saved!=="off";
+  }catch(e){}
+
+  function boot(){
+    if(!enabled)return null;
+    if(!ctx){
+      const AC=window.AudioContext||window.webkitAudioContext;
+      if(!AC)return null;
+      ctx=new AC();
+      master=ctx.createGain();
+      master.gain.value=.19;
+      master.connect(ctx.destination);
+    }
+    if(ctx.state==="suspended")ctx.resume();
+    return ctx;
+  }
+  function tone(freq=440,dur=.08,type="sine",vol=.18,delay=0,endFreq=null){
+    const c=boot(); if(!c)return;
+    const t=c.currentTime+delay;
+    const o=c.createOscillator(),g=c.createGain();
+    o.type=type;o.frequency.setValueAtTime(freq,t);
+    if(endFreq)o.frequency.exponentialRampToValueAtTime(Math.max(30,endFreq),t+dur);
+    g.gain.setValueAtTime(.0001,t);
+    g.gain.exponentialRampToValueAtTime(Math.max(.001,vol),t+.008);
+    g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    o.connect(g);g.connect(master);o.start(t);o.stop(t+dur+.02);
+  }
+  function noise(dur=.08,vol=.08,delay=0,highpass=800){
+    const c=boot(); if(!c)return;
+    const len=Math.max(1,Math.floor(c.sampleRate*dur));
+    const b=c.createBuffer(1,len,c.sampleRate),d=b.getChannelData(0);
+    for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len);
+    const s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();
+    f.type="highpass";f.frequency.value=highpass;
+    g.gain.value=vol;s.buffer=b;s.connect(f);f.connect(g);g.connect(master);
+    s.start(c.currentTime+delay);
+  }
+  const sounds={
+    tap(){tone(620,.045,"sine",.09,0,760)},
+    select(){tone(520,.055,"sine",.11);tone(780,.075,"sine",.08,.045)},
+    next(){tone(430,.06,"triangle",.08);tone(650,.09,"triangle",.09,.055)},
+    match(){
+      tone(523.25,.12,"sine",.16);
+      tone(659.25,.14,"sine",.15,.09);
+      tone(783.99,.18,"sine",.14,.18);
+      tone(1046.5,.32,"sine",.10,.29);
+    },
+    nomatch(){
+      tone(330,.12,"triangle",.12);
+      tone(277,.17,"triangle",.11,.11);
+      tone(220,.25,"triangle",.09,.24);
+    },
+    shuffle(){
+      noise(.07,.09,0,1100);noise(.07,.08,.09,1100);noise(.07,.08,.18,1100);
+      tone(180,.05,"triangle",.04,.02,240);tone(220,.05,"triangle",.04,.11,290);
+    },
+    card(){
+      noise(.10,.10,0,700);tone(300,.08,"triangle",.08,.03,620);
+      tone(880,.13,"sine",.07,.11);
+    },
+    stamp(){
+      noise(.055,.18,0,300);
+      tone(115,.11,"square",.09,0,70);
+    },
+    day(){
+      tone(392,.11,"sine",.09);
+      tone(523.25,.14,"sine",.09,.09);
+      tone(659.25,.2,"sine",.08,.19);
+    },
+    countdown(){tone(740,.045,"sine",.07)},
+    unlock(){
+      tone(392,.10,"sine",.10);
+      tone(523.25,.12,"sine",.10,.08);
+      tone(659.25,.14,"sine",.10,.16);
+      tone(987.77,.30,"sine",.10,.26);
+    },
+    secret(){
+      tone(110,.38,"sine",.07);
+      tone(220,.25,"sine",.06,.12);
+      tone(440,.20,"sine",.07,.30);
+      tone(880,.28,"sine",.08,.46);
+    },
+    gift(){
+      tone(659,.10,"sine",.10);tone(784,.12,"sine",.10,.08);
+      tone(988,.22,"sine",.09,.17);
+    },
+    complete(){
+      [523.25,659.25,783.99,1046.5].forEach((f,i)=>tone(f,.32,"sine",.11,i*.10));
+    }
+  };
+  function play(name){ if(enabled && sounds[name]) sounds[name](); }
+  function setEnabled(v){
+    enabled=!!v;
+    try{localStorage.setItem("stockholmTripSound",enabled?"on":"off")}catch(e){}
+    if(enabled)boot();
+    updateButton();
+  }
+  function updateButton(){
+    const b=document.getElementById("soundToggle");
+    if(!b)return;
+    b.textContent=enabled?"🔊":"🔇";
+    b.setAttribute("aria-label",enabled?"Desactivar sonidos":"Activar sonidos");
+    b.title=enabled?"Desactivar sonidos":"Activar sonidos";
+  }
+  function toggle(){setEnabled(!enabled); if(enabled)play("select")}
+  function isEnabled(){return enabled}
+  return {play,toggle,isEnabled,boot,updateButton};
+})();
+
+function ensureSoundToggle(){
+  let b=document.getElementById("soundToggle");
+  if(!b){
+    b=document.createElement("button");
+    b.id="soundToggle"; b.className="sound-toggle";
+    b.type="button";
+    b.addEventListener("click",e=>{e.stopPropagation();TripSound.toggle()});
+    document.body.appendChild(b);
+  }
+  TripSound.updateButton();
+}
+ensureSoundToggle();
+
+/* iPhone/Safari: el primer toque autoriza AudioContext. */
+document.addEventListener("pointerdown",()=>TripSound.boot(),{once:true,passive:true});
+
+/* Sonido contextual sin tocar la lógica existente. */
+document.addEventListener("click",e=>{
+  const btn=e.target.closest("button,.option,.sat-option,.sun-option,.mon-option,.tue-option,.pass-answer,.destiny-card");
+  if(!btn || btn.id==="soundToggle")return;
+  const text=(btn.textContent||"").replace(/\s+/g," ").trim().toUpperCase();
+
+  if(btn.classList.contains("destiny-card")){TripSound.play("card");return}
+  if(/BARAJ|MEZCL/.test(text)){TripSound.play("shuffle");return}
+  if(/REVELAR|PLAN SECRETO|OPERACIÓN ESTOCOLMO/.test(text)){TripSound.play("secret");return}
+  if(/REGALOS ENTREGADOS|FOTO HECHA/.test(text)){TripSound.play("gift");return}
+  if(/COMPLETAD|TERMINAR|FINALIZAR/.test(text)){TripSound.play("complete");return}
+  if(/SIGUIENTE DÍA|DÍA [1-5]|CONTINUAR AL/.test(text)){TripSound.play("day");return}
+  if(btn.matches(".option,.sat-option,.sun-option,.mon-option,.tue-option,.pass-answer")){TripSound.play("select");return}
+  TripSound.play("tap");
+},true);
+
+/* Detecta overlays/resultados que ya crea la web y les da su sonido propio. */
+let lastSoundSignature="";
+const soundObserver=new MutationObserver(()=>{
+  const txt=(document.getElementById("fx")?.innerText||"")+" "+(document.getElementById("app")?.innerText||"");
+  let sig="";
+  if(/\bNO MATCH\b/i.test(txt))sig="nomatch";
+  else if(/\bMATCH\b/i.test(txt))sig="match";
+  else if(/DESCLASIFICANDO DESTINO/i.test(txt))sig="secret";
+  else if(/OPERACIÓN ESTOCOLMO · COMPLETADA/i.test(txt))sig="complete";
+  if(sig && sig!==lastSoundSignature){
+    lastSoundSignature=sig; TripSound.play(sig);
+    setTimeout(()=>{lastSoundSignature=""},1200);
+  }
+});
+soundObserver.observe(document.getElementById("app"),{childList:true,subtree:true});
+soundObserver.observe(document.getElementById("fx"),{childList:true,subtree:true});
