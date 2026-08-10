@@ -87,7 +87,7 @@ const data=[
 ];
 let state={i:0,answers:[],resolved:{},spins:{Anaïs:3,Alcides:3},used:{Anaïs:0,Alcides:0},wheelQueue:[],wheelIndex:0,wheelLast:null};
 const eur=n=>(n*rate).toFixed(2).replace(".",",");
-function money(sek){const n=safeNumber(sek,0);return `${n} SEK · ~${eur(n)} €`;} SEK · ~${eur(sek)} €`;}
+function money(sek){const n=Number(sek);const safe=Number.isFinite(n)?n:0;return `${safe} SEK · ~${eur(safe)} €`;}
 const floats=()=>`<span class="float f1">✦</span><span class="float f2"><span class="se-flag" aria-label="Bandera de Suecia"></span></span><span class="float f3">⛵</span><span class="float f4">♡</span>`;
 function welcome(){app.innerHTML=`<section class="screen hero-scene">${floats()}<section class="card hero"><span class="sticker">✈ OPERATION STOCKHOLM</span><h1>STOCKHOLM<span>18 — 22 SEPT · 2026</span></h1><p>Dos personas. Una ciudad.<br><b>Y 3 re-spins por cabeza para negociar con el destino.</b></p><button type="button" class="btn primary" id="go">EMPEZAR EL JUEGO →</button><p class="tiny">🎟️ Anaïs ×3 &nbsp; · &nbsp; 🎟️ Alcides ×3 &nbsp; · &nbsp; válidos para todo el viaje</p></section></section>`;const startBtn=document.getElementById("go"); if(startBtn){startBtn.addEventListener("click",render,{once:true});}}
 function shell(q,inner,cls){return `<section class="screen ${cls}">${cls==="night-scene"?'<div class="stars"></div>':""}<section class="card ${q.theme==="postcard"?"postcard-card":q.theme==="cafe"?"menu-card":"night-card"}"><div class="top"><span class="pill">${q.day}</span><div class="progress"><div style="width:${state.i/data.length*100}%"></div></div><span class="count">${state.i+1}/${data.length}</span></div><div class="head ${q.theme==="cafe"?"menu-title":""}"><div class="mini">DECISIÓN ${state.i+1} · ELECCIÓN SECRETA</div><h2>${q.title}</h2><p>${q.sub}</p></div>${inner}</section></section>`}
@@ -295,25 +295,7 @@ function officialDay(){
  document.getElementById("saturday").onclick=saturdayIntro; again.onclick=()=>{state={i:0,answers:[],resolved:{},spins:{Anaïs:3,Alcides:3},used:{Anaïs:0,Alcides:0},wheelQueue:[],wheelIndex:0,wheelLast:null};welcome()}
 }
 
-function resumeOrStart(){
-  const hasSave=loadGame();
 
-  if(hasSave && tripCompleted()){
-    renderReturnHub();
-    return;
-  }
-
-  // Resume known day/progress where possible.
-  if(hasSave){
-    if(typeof tue!=="undefined" && (tue.i>0 || tue.answers?.length)){ renderTuesday(); return; }
-    if(typeof mon!=="undefined" && (mon.i>0 || mon.answers?.length)){ renderMonday(); return; }
-    if(typeof sun!=="undefined" && (sun.i>0 || sun.answers?.length)){ renderSunday(); return; }
-    if(typeof sat!=="undefined" && (sat.i>0 || sat.answers?.length)){ renderSaturday(); return; }
-    if(state && (state.i>0 || state.a?.length)){ renderQ(); return; }
-  }
-  welcome();
-}
-resumeOrStart();
 
 
 
@@ -1307,3 +1289,25 @@ function operationComplete(){
   confetti();
   document.getElementById("backTrip").onclick=renderReturnHub;
 }
+
+
+/* ===== V15.2 · ARRANQUE SEGURO ===== */
+function resumeOrStartV152(){
+  const hasSave=loadGame();
+
+  if(hasSave && tripCompleted()){
+    renderReturnHub();
+    return;
+  }
+
+  if(hasSave){
+    if(typeof tue!=="undefined" && tue && (tue.i>0 || (tue.answers&&tue.answers.length))){ renderTuesday(); return; }
+    if(typeof mon!=="undefined" && mon && (mon.i>0 || (mon.answers&&mon.answers.length))){ renderMonday(); return; }
+    if(typeof sun!=="undefined" && sun && (sun.i>0 || (sun.answers&&sun.answers.length))){ renderSunday(); return; }
+    if(typeof sat!=="undefined" && sat && (sat.i>0 || (sat.answers&&sat.answers.length))){ renderSaturday(); return; }
+    if(typeof state!=="undefined" && state && (state.i>0 || (state.answers&&state.answers.length))){ render(); return; }
+  }
+
+  welcome();
+}
+resumeOrStartV152();

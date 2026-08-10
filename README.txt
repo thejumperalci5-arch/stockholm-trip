@@ -1,9 +1,10 @@
-STOCKHOLM TRIP V15.1 — TEST DESBLOQUEADO
+STOCKHOLM TRIP V15.2 — TEST DESBLOQUEADO
 
-- Operación Estocolmo está desbloqueada AHORA mediante:
-  TODAY_OVERRIDE="2026-09-21"
-- Sirve para probar toda la secuencia sin esperar.
-- Incluye contador visual.
-- NO usar esta versión como definitiva pública.
+CORRECCIÓN CRÍTICA:
+- Reparado error de sintaxis en money() que dejaba la página totalmente en blanco.
+- El arranque con localStorage ahora se ejecuta al final del script, después de inicializar
+  todos los días y estados del viaje.
+- Corregida la reanudación del Día 1 para usar render().
+- Cache bust actualizado a ?v=15.2.
 
-Para la web final usa V15.1 FINAL LOCKED.
+- Operación Estocolmo está desbloqueada artificialmente para probarla ahora.
