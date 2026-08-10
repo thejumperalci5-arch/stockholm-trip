@@ -1410,17 +1410,24 @@ const TripSound=(()=>{
       tone(1046.5,.32,"sine",.10,.29);
     },
     nomatch(){
-      tone(330,.12,"triangle",.12);
-      tone(277,.17,"triangle",.11,.11);
-      tone(220,.25,"triangle",.09,.24);
+      tone(349,.14,"triangle",.19);
+      tone(294,.19,"triangle",.18,.10);
+      tone(220,.30,"triangle",.16,.23);
+      noise(.10,.055,.05,420);
     },
     shuffle(){
-      noise(.07,.09,0,1100);noise(.07,.08,.09,1100);noise(.07,.08,.18,1100);
-      tone(180,.05,"triangle",.04,.02,240);tone(220,.05,"triangle",.04,.11,290);
+      noise(.13,.15,0,650);
+      noise(.12,.14,.12,760);
+      noise(.13,.15,.24,620);
+      noise(.10,.12,.36,850);
+      tone(145,.08,"sine",.045,.02,205);
+      tone(185,.08,"sine",.045,.15,250);
+      tone(155,.09,"sine",.04,.29,220);
     },
     card(){
-      noise(.10,.10,0,700);tone(300,.08,"triangle",.08,.03,620);
-      tone(880,.13,"sine",.07,.11);
+      noise(.075,.045,0,1250);
+      tone(260,.09,"sine",.045,.015,390);
+      tone(520,.10,"sine",.035,.075,610);
     },
     stamp(){
       noise(.055,.18,0,300);
@@ -1519,3 +1526,29 @@ const soundObserver=new MutationObserver(()=>{
 });
 soundObserver.observe(document.getElementById("app"),{childList:true,subtree:true});
 soundObserver.observe(document.getElementById("fx"),{childList:true,subtree:true});
+
+
+/* ===== V16.3 · DETECCIÓN REAL DE BARAJADO ===== */
+let v163ShuffleLock=false;
+const v163ShuffleObserver=new MutationObserver(()=>{
+  const deck=document.querySelector(".deck-table,.cards-panel");
+  if(!deck)return;
+  const shuffling=!!deck.querySelector(".shuffling,.shuffle-1,.shuffle-2,.shuffle-3") ||
+                  /\bshuffl/i.test(deck.className+" "+[...deck.querySelectorAll("*")].map(x=>x.className||"").join(" "));
+  if(shuffling && !v163ShuffleLock){
+    v163ShuffleLock=true;
+    TripSound.play("shuffle");
+    setTimeout(()=>v163ShuffleLock=false,900);
+  }
+});
+v163ShuffleObserver.observe(document.getElementById("app"),{subtree:true,childList:true,attributes:true,attributeFilter:["class"]});
+
+/* Explicitly catch common shuffle controls even if their visible label changes. */
+document.addEventListener("click",e=>{
+  const el=e.target.closest("[id],[class],button");
+  if(!el)return;
+  const signature=((el.id||"")+" "+(el.className||"")+" "+(el.textContent||"")).toLowerCase();
+  if(/baraj|shuffle|mezcl/.test(signature)){
+    TripSound.play("shuffle");
+  }
+},true);

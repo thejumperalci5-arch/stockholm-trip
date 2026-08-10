@@ -1,8 +1,10 @@
-STOCKHOLM TRIP V16.2 — SOUND DESIGN
-- Sonidos generados con Web Audio API: no necesita mp3 ni conexión externa.
-- Tap, selección, MATCH, NO MATCH, barajado, carta, cambio de día, desbloqueo/plan secreto, regalos y final.
-- Botón 🔊/🔇 fijo; la preferencia se guarda en el iPhone.
-- Compatible con la política de audio de Safari: se activa tras el primer toque.
-- Mantiene la fika de Alcides del último día.
-- No se ha cambiado la lógica del juego.
+STOCKHOLM TRIP V16.3 — SOUND TUNING
+
+Cambios:
+- BARAJADO: sonido más claro, más largo y detección reforzada durante la animación.
+- NO MATCH: volumen y presencia aumentados.
+- GIRO/ELECCIÓN DE CARTA: sonido suavizado; eliminado el ping agudo irritante.
+- Se mantienen todos los demás sonidos y la lógica de V16.2.
+- Cache bust ?v=16.3.
+
 TEST: Operación Estocolmo desbloqueada.
